@@ -13,6 +13,7 @@ const whatsapp = text => `https://wa.me/${phone}?text=${encodeURIComponent(text)
 let filter = "All";
 let selected = null;
 let picks = [];
+let revealObserver = null;
 try { picks = JSON.parse(localStorage.getItem("glideline-luxury-picks")) || []; } catch { picks = []; }
 picks = picks.filter(id => products.some(product => product.id === id));
 
@@ -20,6 +21,9 @@ function togglePick(id) {
   picks = picks.includes(id) ? picks.filter(item => item !== id) : [...picks, id];
   localStorage.setItem("glideline-luxury-picks", JSON.stringify(picks));
   renderProducts(); renderPicks(); if (selected) renderModal();
+  const card = document.querySelector(`.product [data-pick="${id}"]`)?.closest(".product");
+  if (card) { card.classList.add("pick-feedback"); setTimeout(() => card.classList.remove("pick-feedback"), 420); }
+  if (selected?.id === id) { const button = $(".modal-copy .text-button"); button.classList.add("pick-feedback"); setTimeout(() => button.classList.remove("pick-feedback"), 420); }
 }
 
 function renderFilters() {
@@ -27,8 +31,21 @@ function renderFilters() {
 }
 
 function renderProducts() {
+  if (revealObserver) revealObserver.disconnect();
   const visible = filter === "All" ? products : products.filter(product => product.type === filter);
-  $(".product-grid").innerHTML = visible.map((product, index) => `<article class="product"><button class="product-image" type="button" data-product="${product.id}" aria-label="View ${product.name}"><span class="index">${String(index + 1).padStart(2, "0")}</span><img src="${product.image}" alt="${product.name}"><img class="alternate" src="${product.alt}" alt=""><span class="view">View piece</span></button><div class="product-meta"><div><h3>${product.name}</h3><p>${product.type} · ${product.tone}</p></div><button type="button" data-pick="${product.id}" aria-label="${picks.includes(product.id) ? "Remove" : "Add"} ${product.name} ${picks.includes(product.id) ? "from" : "to"} picks">${picks.includes(product.id) ? "×" : "+"}</button></div></article>`).join("");
+  $(".product-grid").innerHTML = visible.map((product, index) => `<article class="product"><button class="product-image" type="button" data-product="${product.id}" aria-label="View ${product.name}"><span class="index">${String(index + 1).padStart(2, "0")}</span><img src="${product.image}" alt="${product.name}"><img class="alternate" src="${product.alt}" alt=""><span class="view">View piece</span></button><div class="product-meta"><div><h3>${product.name}</h3><p>${product.type} · ${product.tone}</p></div><button type="button" data-pick="${product.id}" aria-label="${picks.includes(product.id) ? "Remove" : "Add"} ${product.name} ${picks.includes(product.id) ? "from" : "to"} picks">+</button></div></article>`).join("");
+  observeProducts();
+}
+
+function observeProducts() {
+  const cards = document.querySelectorAll(".product:not(.is-revealed)");
+  if (!("IntersectionObserver" in window) || matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    cards.forEach(card => card.classList.add("is-revealed")); return;
+  }
+  if (!revealObserver) revealObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add("is-revealed"); revealObserver.unobserve(entry.target); } });
+  }, { rootMargin: "0px 0px -7% 0px", threshold: .08 });
+  cards.forEach((card, index) => { card.style.transitionDelay = `${Math.min(index % 3, 2) * 70}ms`; revealObserver.observe(card); });
 }
 
 function renderPicks() {
@@ -42,6 +59,7 @@ function renderPicks() {
 
 function renderModal() {
   const modal = $(".modal");
+  const opening = Boolean(selected) && modal.hidden;
   modal.hidden = !selected;
   document.body.classList.toggle("modal-open", Boolean(selected));
   if (!selected) return;
@@ -50,6 +68,10 @@ function renderModal() {
   $(".modal-copy h2").textContent = selected.name;
   $(".modal-copy .gold-button").href = whatsapp(`Hello Glideline, I am interested in ${selected.name} (${selected.id}).`);
   $(".modal-copy .text-button").textContent = picks.includes(selected.id) ? "Remove from picks" : "Add to picks";
+  if (opening && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    modal.classList.remove("is-opening"); void modal.offsetWidth; modal.classList.add("is-opening");
+    setTimeout(() => modal.classList.remove("is-opening"), 460);
+  }
 }
 
 function setPicksOpen(open) {
