@@ -59,6 +59,7 @@ em { font-weight:400; color:var(--gold); }
 .service { min-height:720px; background:#1a1a16; color:#f3eee4; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:100px 20px; }
 .service .section-no { color:var(--gold); }.service h2 { font-size:clamp(64px,8vw,120px); line-height:.9; margin:35px 0; }.service>p:not(.section-no) { color:#8f8b80; font-size:13px; }
 .gold-button { margin-top:35px; min-width:250px; min-height:58px; padding:0 22px; display:inline-flex; justify-content:space-between; align-items:center; background:var(--gold); color:#12120f; font-size:9px; font-weight:500; text-transform:uppercase; letter-spacing:.18em; }
+.service-contact { min-width:190px; min-height:46px; padding:0 18px; justify-content:center; border-radius:999px; }
 footer { padding:80px 5vw; background:#11110e; color:#e8e3d9; display:grid; grid-template-columns:2fr 1fr 1fr; gap:50px; }footer p { margin:0; color:#858177; font:17px/1.5 var(--serif); }footer div { display:flex; flex-direction:column; gap:18px; font-size:9px; letter-spacing:.18em; text-transform:uppercase; }
 .picks-wrap { position:fixed; z-index:20; bottom:0; left:50%; transform:translateX(-50%); width:min(680px,92%); box-shadow:0 8px 30px #0005; }
 .picks-wrap:not([hidden]) { animation:picks-enter .38s cubic-bezier(.22,1,.36,1) both; }
