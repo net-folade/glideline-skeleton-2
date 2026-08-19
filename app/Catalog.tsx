@@ -61,7 +61,7 @@ export default function Home() {
           <a className="line-link light" href="#collection">View the collection <span>↘</span></a>
         </div>
         <div className="hero-art">
-          <div className="frame"><img src="/trads/gl-001-1.svg" alt="Ivory Regent Agbada" /></div>
+          <div className="frame"><img src={`${basePath}/trads/gl-001-1.svg`} alt="Ivory Regent Agbada" /></div>
           <span className="edition">Private Edition · 01</span>
         </div>
         <span className="vertical-mark">GLIDELINE / LAGOS</span>

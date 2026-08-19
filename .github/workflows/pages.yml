@@ -30,6 +30,12 @@ jobs:
       - run: npm run build
         env:
           NEXT_PUBLIC_BASE_PATH: /glideline-skeleton-2
+      - name: Check Pages export
+        run: |
+          test -f dist/client/index.html
+          test -f dist/client/trads/gl-001-1.svg
+          ! grep -q 'src="/trads/' dist/client/index.html
+          grep -q '/glideline-skeleton-2/_next/static' dist/client/index.html
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
