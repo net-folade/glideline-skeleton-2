@@ -36,6 +36,11 @@ jobs:
           test -f dist/client/trads/gl-001-1.svg
           ! grep -q 'src="/trads/' dist/client/index.html
           grep -q '/glideline-skeleton-2/_next/static' dist/client/index.html
+          test -d dist/client/glideline-skeleton-2/_next
+          mv dist/client/glideline-skeleton-2/_next dist/client/_next
+          rmdir dist/client/glideline-skeleton-2
+          test -d dist/client/_next/static/chunks
+          test -d dist/client/_next/static/css
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
